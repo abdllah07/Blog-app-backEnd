@@ -1,9 +1,12 @@
 import express  from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/db";
-
+import path from "path"
 // routes 
 import userRoutes from './routes/UserRoutes'
+import postRoutes from './routes/PostRoutes'
+import commentRoute from './routes/CommentRoute'
+
 import { errorResponseHandler, invalidPathHandler } from "./middleware/errorHandler";
 
 dotenv.config();
@@ -16,6 +19,12 @@ app.get('/' , (req, res) => {
 });
 
 app.use('/api/users' , userRoutes)
+app.use('/api/posts' , postRoutes)
+app.use('/api/comments' , commentRoute)
+
+// static assets 
+app.use('/uploads/', express.static(path.join(__dirname, '/uploads')));
+
 app.use(invalidPathHandler);
 app.use(errorResponseHandler);
 

@@ -125,12 +125,16 @@ const updateProfilePicture = async function (req , res, next) {
                 const error = new Error("n unknown error occurred while uploading profile picture")
                 next(error);
             }else {
+                // everything went will 
+                let filename; 
                 if(req.file) {
-                     // everything went will 
-                    const updatedUser = await User.findByIdAndUpdate(req.user._id, {
-                        avatar : req.file.filename,
-    
-                    }, { new : true});
+                    let updatedUser = await User.findById(req.user._id);
+                    filename = updatedUser.avatar;
+                    if(filename) {
+                        fileRemover(filename);
+                    }
+                    updatedUser.avatar = req.file.filename;
+                    await updatedUser.save();
                     res.json({
                         _id : updatedUser._id,
                         avatar : updatedUser.avatar,
