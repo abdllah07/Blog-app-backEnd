@@ -21,6 +21,7 @@ const  createPost = async(req , res , next) => {
 
         const createdPost = await post.save();
         return res.json(createdPost);
+        
     } catch (error) {
         next(error);
     }
@@ -96,6 +97,8 @@ const deletePost = async (req, res , next) => {
             return next(error);
         }
 
+        fileRemover(post.photo);
+
             await Comment.deleteMany({post : post._id});
 
         return res.json({
@@ -115,6 +118,11 @@ const getPost = async (req, res, next) => {
             {
                 path: "user",
                 select: ['avatar', 'name'],
+            },
+            // get the category data
+            {
+                path: "categories",
+                select: ['title'],
             },
             // get the comments data
             {
@@ -159,15 +167,43 @@ const getPost = async (req, res, next) => {
 
 const getAllPost = async (req , res , next) => {
     try {
-        const posts = await Post.find({}).populate([
-            // get the user data 
+        const filter = req.query.searchKeyword;
+        let where = {};
+        if(filter){
+            where.title = {$regex: filter ,$options : 'i'};
+        }
+        let query = Post.find(where);
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * pageSize;
+        const total = await Post.find(where).countDocuments();
+        const pages = Math.ceil(total / pageSize);
+
+        res.header({
+            'x-filter' : filter,
+            'x-totalCount' : JSON.stringify(total),
+            'x-currentPage' : JSON.stringify(page),
+            'x-pageSize' : JSON.stringify(pageSize),
+            'x-totalPageCount' : JSON.stringify(pages),
+        })
+
+
+        if(page > pages ) {
+            return res.json([]);
+        }
+        const result =  await query.skip(skip).limit(pageSize).populate([
             {
-                path : "user",
-                select : ['avatar' , "name" , "verified"],
+                path: "user",
+                select: ['avatar', 'name' ,'verified'],
             },
-        ]);
-        res.json(posts);
+            {
+                path: "categories",
+                select: ['title'],
+            },
+        ]).sort({updatedAt : "desc"});
         
+        return res.json(result);
+
     } catch (error) {
         next(error);
     }

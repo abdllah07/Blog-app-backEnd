@@ -4,7 +4,7 @@ import { Schema , model } from "mongoose";
 
 // create Schema 
 const PostCategoriesSchema = new Schema({
-    name: { type: String , required : true },
+    title: { type: String , required : true },
 },{timestamps : true})
 
 
