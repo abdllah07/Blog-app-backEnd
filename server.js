@@ -7,7 +7,10 @@ import cors from "cors"
 import userRoutes from './routes/UserRoutes'
 import postRoutes from './routes/PostRoutes'
 import commentRoute from './routes/CommentRoute'
-import categoryRoute from './routes/PostCategoiesRoutes'
+import categoryRoute from './routes/PostCategoiesRoutes';
+
+import newsRoute from './routes/NewsRoute'
+
 
 import { errorResponseHandler, invalidPathHandler } from "./middleware/errorHandler";
 
@@ -25,6 +28,9 @@ app.use('/api/users' , userRoutes)
 app.use('/api/posts' , postRoutes)
 app.use('/api/comments' , commentRoute)
 app.use('/api/post-categories' , categoryRoute)
+
+app.use('/api/news' , newsRoute)
+
 
 // static assets 
 app.use('/uploads/', express.static(path.join(__dirname, '/uploads')));
