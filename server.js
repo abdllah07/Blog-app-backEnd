@@ -10,6 +10,7 @@ import commentRoute from './routes/CommentRoute'
 import categoryRoute from './routes/PostCategoiesRoutes';
 
 import newsRoute from './routes/NewsRoute'
+import userArticleRoute from './routes/UserArticleRoute'
 
 
 import { errorResponseHandler, invalidPathHandler } from "./middleware/errorHandler";
@@ -30,6 +31,7 @@ app.use('/api/comments' , commentRoute)
 app.use('/api/post-categories' , categoryRoute)
 
 app.use('/api/news' , newsRoute)
+app.use('/api/userArticle' , userArticleRoute)
 
 
 // static assets 
